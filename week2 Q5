@@ -1,0 +1,73 @@
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.List;
+import java.util.Comparator;
+
+public class StopWordFrequencyReport {
+
+    static void printFilteredWordFrequency(String feedback) {
+
+        // Convert to lowercase and remove punctuation
+        String cleanedText = feedback.toLowerCase()
+                .replace(".", "")
+                .replace(",", "");
+
+        // Stop words
+        HashSet<String> stopWords = new HashSet<>();
+
+        stopWords.add("the");
+        stopWords.add("was");
+        stopWords.add("and");
+        stopWords.add("a");
+        stopWords.add("is");
+        stopWords.add("of");
+        stopWords.add("in");
+
+        // Split into words
+        String[] words = cleanedText.split("\\s+");
+
+        // Store word frequencies
+        HashMap<String, Integer> frequency = new HashMap<>();
+
+        for (int i = 0; i < words.length; i++) {
+
+            // Skip stop words
+            if (stopWords.contains(words[i])) {
+                continue;
+            }
+
+            if (frequency.containsKey(words[i])) {
+                frequency.put(words[i], frequency.get(words[i]) + 1);
+            } else {
+                frequency.put(words[i], 1);
+            }
+        }
+
+        // Convert map entries to a list for sorting
+        List<Map.Entry<String, Integer>> entries =
+                new ArrayList<>(frequency.entrySet());
+
+        // Sort by count in descending order
+        entries.sort(
+                Comparator.comparing(Map.Entry<String, Integer>::getValue)
+                        .reversed()
+        );
+
+        // Print the result
+        for (Map.Entry<String, Integer> entry : entries) {
+            System.out.println(
+                    entry.getKey() + ": " + entry.getValue()
+            );
+        }
+    }
+
+    public static void main(String[] args) {
+
+        String feedback =
+                "The mentor was great, the session was great and clear.";
+
+        printFilteredWordFrequency(feedback);
+    }
+}
